@@ -40,9 +40,19 @@
   padding: 8px 28px 40px;
 }
 
+.modeRow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
 @media (max-width: 420px) {
   .header {
     padding: 18px 18px;
+  }
+
+  .modeRow {
+    margin-bottom: 18px;
   }
 
   .main {

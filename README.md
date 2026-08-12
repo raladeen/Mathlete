@@ -1,8 +1,7 @@
 # Mental Math
 
-A quiet mental math drill — pick a category, answer problems until you stop. No
-timer, no score, no accounts. Difficulty adapts to you silently and resets when
-you reload the page.
+A quiet mental math drill — pick a difficulty and a category, then answer
+problems until you stop. No timer, no score, no accounts.
 
 Six categories: addition, subtraction, multiplication, division, percentages,
 and fractions. Every problem is built so the answer is a whole number, so a
@@ -11,12 +10,36 @@ single numeric keypad covers all of them.
 ## How it plays
 
 - **Endless.** A session runs until you go back to the category list.
-- **Adaptive.** Each category has 5 levels. Three correct in a row moves you up
-  (max 5); one wrong answer moves you down (min 1). The five dots on the play
-  screen show where you are. Nothing is stored — reloading starts over at
-  level 1.
+- **Three modes.** Easy, Medium, and Hard. Pick one above the category grid, or
+  switch from the play screen — switching mid-session swaps in a fresh problem
+  right away. Difficulty never shifts on its own. The mode is remembered while
+  the tab is open and resets to Medium on reload.
 - **Keypad or keyboard.** Tap the on-screen keys, or use `0`–`9`,
   `Backspace` to delete, `Enter` / `=` to submit, and `Escape` to go back.
+
+## What the modes mean
+
+Easy, Medium, and Hard are one-, two-, and three-digit operands respectively.
+Four categories can't take that literally, so they scale on their own axis:
+
+| Category | Easy | Medium | Hard |
+| --- | --- | --- | --- |
+| Addition | `7 + 4` | `47 + 68` | `418 + 267` |
+| Subtraction | `9 − 5` | `82 − 39` | `731 − 458` |
+| Multiplication | `7 × 6` | `48 × 7` | `312 × 8` |
+| Division | `56 ÷ 8` | `144 ÷ 12` | `608 ÷ 16` |
+| Percentages | `50% of 40` | `15% of 60` | `35% of 240` |
+| Fractions | `3⁄4 of 12` | `2⁄5 of 45` | `7⁄12 of 180` |
+
+- **Multiplication** grows only its leading operand — three digits by three
+  digits isn't a mental-math problem.
+- **Division** derives the dividend from divisor × quotient, with a floor per
+  mode so a small draw of both can't put `12 ÷ 3` in a Hard session.
+- **Percentages** scale by how awkward the percentage is (`50%` → `15%` → `35%`)
+  as well as by the size of the whole.
+- **Fractions** scale by denominator size rather than digit count.
+
+Subtraction never goes negative, and division is always exact.
 
 ## Development
 
@@ -33,13 +56,13 @@ npm run preview  # serve the production build locally
 
 | Path | What it holds |
 | --- | --- |
-| `src/generators.ts` | Pure problem generation — level ranges and the six categories |
-| `src/adaptive.ts` | Level-up / level-down rules |
-| `src/App.tsx` | Screen and session state, keyboard handling |
-| `src/components/` | Category grid, play view, keypad |
+| `src/generators.ts` | Pure problem generation — per-mode ranges and the six categories |
+| `src/App.tsx` | Screen, mode, and session state, plus keyboard handling |
+| `src/components/` | Category grid, play view, keypad, mode toggle |
 
-`generators.ts` and `adaptive.ts` are pure and hold no UI, so the rules are
-covered directly by `npm test`.
+`generators.ts` is pure and holds no UI, so every difficulty rule is covered
+directly by `npm test` — including that each mode's answers are whole numbers
+and its operands sit in the advertised range.
 
 ## Deploying to Netlify
 

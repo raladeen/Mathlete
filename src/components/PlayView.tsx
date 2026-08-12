@@ -1,17 +1,19 @@
-import { MAX_LEVEL, type Category, type Level, type Problem } from '../generators';
+import type { Category, Mode, Problem } from '../generators';
 import { Keypad } from './Keypad';
+import { ModeToggle } from './ModeToggle';
 import styles from './PlayView.module.css';
 
 export type Feedback = { status: 'correct' } | { status: 'wrong'; correctAnswer: number };
 
 interface PlayViewProps {
   category: Category;
-  level: Level;
+  mode: Mode;
   problem: Problem;
   /** Changes with every new problem so the entrance animation replays. */
   problemId: number;
   entry: string;
   feedback: Feedback | null;
+  onModeChange: (mode: Mode) => void;
   onDigit: (digit: string) => void;
   onDelete: () => void;
   onSubmit: () => void;
@@ -21,11 +23,12 @@ const EN_DASH = '–';
 
 export function PlayView({
   category,
-  level,
+  mode,
   problem,
   problemId,
   entry,
   feedback,
+  onModeChange,
   onDigit,
   onDelete,
   onSubmit,
@@ -48,19 +51,7 @@ export function PlayView({
           </span>
           <span className={styles.categoryName}>{category.name}</span>
         </span>
-        <span className={styles.level}>
-          <span className={styles.levelLabel} aria-hidden="true">
-            Level
-          </span>
-          <span className={styles.dots} role="img" aria-label={`Level ${level} of ${MAX_LEVEL}`}>
-            {Array.from({ length: MAX_LEVEL }, (_, index) => (
-              <span
-                key={index}
-                className={`${styles.dot} ${index < level ? styles.dotFilled : ''}`}
-              />
-            ))}
-          </span>
-        </span>
+        <ModeToggle mode={mode} onChange={onModeChange} />
       </div>
 
       <div className={styles.board}>

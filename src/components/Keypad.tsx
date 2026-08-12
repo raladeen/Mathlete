@@ -10,7 +10,9 @@ const DIGIT_ROWS = ['789', '456', '123'] as const;
 
 export function Keypad({ onDigit, onDelete, onSubmit }: KeypadProps) {
   return (
-    <div className={styles.keypad}>
+    // Marked so Enter always means "submit" here, rather than re-activating
+    // whichever key happens to hold focus.
+    <div className={styles.keypad} data-keypad="">
       {DIGIT_ROWS.join('')
         .split('')
         .map((digit) => (

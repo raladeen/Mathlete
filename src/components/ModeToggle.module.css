@@ -1,0 +1,53 @@
+.toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface-tile);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+}
+
+.option {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.45);
+  background: none;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition:
+    color 0.14s,
+    background 0.14s,
+    box-shadow 0.14s;
+}
+
+.option:hover {
+  color: var(--text);
+}
+
+.option:focus-visible {
+  outline-offset: 1px;
+}
+
+/* Deliberately not a white fill: the ✓ key is the one bright element on the
+   play screen, so selection here reads through contrast and a faint glow. */
+.selected {
+  color: var(--text-bright);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 18px rgba(255, 255, 255, 0.04);
+}
+
+.selected:hover {
+  color: var(--text-bright);
+  background: rgba(255, 255, 255, 0.13);
+}
+
+@media (max-width: 420px) {
+  .option {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}

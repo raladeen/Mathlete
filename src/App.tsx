@@ -1,9 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './App.module.css';
-import { advance, initialProgress, type ProgressByCategory } from './adaptive';
 import { CategoryGrid } from './components/CategoryGrid';
+import { ModeToggle } from './components/ModeToggle';
 import { PlayView, type Feedback } from './components/PlayView';
-import { CATEGORIES, generateProblem, type CategoryKey, type Problem } from './generators';
+import {
+  CATEGORIES,
+  DEFAULT_MODE,
+  generateProblem,
+  type CategoryKey,
+  type Mode,
+  type Problem,
+} from './generators';
 
 /** How long the result stays on screen before the next problem appears. */
 const CORRECT_PAUSE_MS = 520;
@@ -19,8 +26,8 @@ interface Round {
 }
 
 export default function App() {
+  const [mode, setMode] = useState<Mode>(DEFAULT_MODE);
   const [category, setCategory] = useState<CategoryKey | null>(null);
-  const [progress, setProgress] = useState<ProgressByCategory>(initialProgress);
   const [round, setRound] = useState<Round | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -38,13 +45,13 @@ export default function App() {
       clearTimer();
       setCategory(next);
       setRound({
-        problem: generateProblem(next, progress[next].level),
+        problem: generateProblem(next, mode),
         problemId: 0,
         entry: '',
         feedback: null,
       });
     },
-    [clearTimer, progress],
+    [clearTimer, mode],
   );
 
   const quit = useCallback(() => {
@@ -52,6 +59,26 @@ export default function App() {
     setCategory(null);
     setRound(null);
   }, [clearTimer]);
+
+  /** Switching mode mid-session swaps in a fresh problem at the new difficulty. */
+  const changeMode = useCallback(
+    (next: Mode) => {
+      setMode(next);
+      if (!category) return;
+      clearTimer();
+      setRound((current) =>
+        current
+          ? {
+              problem: generateProblem(category, next),
+              problemId: current.problemId + 1,
+              entry: '',
+              feedback: null,
+            }
+          : current,
+      );
+    },
+    [category, clearTimer],
+  );
 
   const pressDigit = useCallback((digit: string) => {
     setRound((current) => {
@@ -74,9 +101,7 @@ export default function App() {
     if (!category || !round || round.feedback || round.entry === '') return;
 
     const correct = Number.parseInt(round.entry, 10) === round.problem.answer;
-    const nextProgress = advance(progress[category], correct);
 
-    setProgress((current) => ({ ...current, [category]: nextProgress }));
     setRound((current) =>
       current
         ? {
@@ -95,7 +120,7 @@ export default function App() {
         setRound((current) =>
           current
             ? {
-                problem: generateProblem(category, nextProgress.level),
+                problem: generateProblem(category, mode),
                 problemId: current.problemId + 1,
                 entry: '',
                 feedback: null,
@@ -105,7 +130,7 @@ export default function App() {
       },
       correct ? CORRECT_PAUSE_MS : WRONG_PAUSE_MS,
     );
-  }, [category, clearTimer, progress, round]);
+  }, [category, clearTimer, mode, round]);
 
   // Physical keyboard mirrors the on-screen keypad.
   const handlers = useRef({ pressDigit, deleteDigit, submit, quit, playing: false });
@@ -115,6 +140,13 @@ export default function App() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (!handlers.current.playing) return;
       if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+      // Enter on a focused control (mode toggle, back) should activate it. Only
+      // the keypad treats Enter as "submit" no matter what holds focus.
+      if (event.key === 'Enter') {
+        const active = document.activeElement;
+        if (active instanceof HTMLButtonElement && !active.closest('[data-keypad]')) return;
+      }
 
       if (event.key >= '0' && event.key <= '9' && event.key.length === 1) {
         handlers.current.pressDigit(event.key);
@@ -151,17 +183,23 @@ export default function App() {
         {activeCategory && round ? (
           <PlayView
             category={activeCategory}
-            level={progress[activeCategory.key].level}
+            mode={mode}
             problem={round.problem}
             problemId={round.problemId}
             entry={round.entry}
             feedback={round.feedback}
+            onModeChange={changeMode}
             onDigit={pressDigit}
             onDelete={deleteDigit}
             onSubmit={submit}
           />
         ) : (
-          <CategoryGrid categories={CATEGORIES} onSelect={start} />
+          <>
+            <div className={styles.modeRow}>
+              <ModeToggle mode={mode} onChange={changeMode} />
+            </div>
+            <CategoryGrid categories={CATEGORIES} mode={mode} onSelect={start} />
+          </>
         )}
       </main>
     </>

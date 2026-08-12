@@ -9,7 +9,6 @@
   --surface-key: #0c0c0c;
   --hairline: rgba(255, 255, 255, 0.08);
   --hairline-key: rgba(255, 255, 255, 0.09);
-  --inactive: rgba(255, 255, 255, 0.14);
 
   color-scheme: dark;
   font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;

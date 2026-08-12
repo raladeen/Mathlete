@@ -1,12 +1,14 @@
-import type { Category, CategoryKey } from '../generators';
+import type { Category, CategoryKey, Mode } from '../generators';
 import styles from './CategoryGrid.module.css';
 
 interface CategoryGridProps {
   categories: readonly Category[];
+  /** Decides which sample expression each tile previews. */
+  mode: Mode;
   onSelect: (category: CategoryKey) => void;
 }
 
-export function CategoryGrid({ categories, onSelect }: CategoryGridProps) {
+export function CategoryGrid({ categories, mode, onSelect }: CategoryGridProps) {
   return (
     <div className={styles.grid}>
       {categories.map((category) => (
@@ -21,7 +23,7 @@ export function CategoryGrid({ categories, onSelect }: CategoryGridProps) {
           </span>
           <span className={styles.label}>
             <span className={styles.name}>{category.name}</span>
-            <span className={styles.sample}>{category.sample}</span>
+            <span className={styles.sample}>{category.sample[mode]}</span>
           </span>
         </button>
       ))}
