@@ -1,0 +1,153 @@
+.play {
+  display: flex;
+  flex-direction: column;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.category {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.categorySymbol {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.categoryName {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.levelLabel {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--inactive);
+  transition: background 0.2s;
+}
+
+.dotFilled {
+  background: var(--text-bright);
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  min-height: 280px;
+  padding: 44px 0 48px;
+}
+
+.problem {
+  font-size: clamp(46px, 11vw, 84px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--text-bright);
+  animation: pop 0.22s ease;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.97);
+    opacity: 0.35;
+  }
+  60% {
+    transform: scale(1.015);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  min-height: 1.2em;
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.entryEmpty {
+  color: var(--text-faint);
+}
+
+.entryCorrect {
+  color: var(--text-bright);
+}
+
+.entryWrong {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.note {
+  min-height: 22px;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.noteCorrect {
+  color: var(--text-bright);
+}
+
+@media (max-height: 760px) {
+  .board {
+    gap: 18px;
+    min-height: 0;
+    padding: 24px 0 28px;
+  }
+}
+
+@media (max-width: 420px) {
+  /* Center the problem in the space above the keypad, and keep the keypad
+     itself low enough to reach with a thumb. */
+  .play {
+    flex: 1;
+  }
+
+  .board {
+    flex: 1;
+    gap: 20px;
+    min-height: 0;
+    padding: 28px 0 32px;
+  }
+
+  .categorySymbol {
+    font-size: 24px;
+  }
+}
